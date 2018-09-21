@@ -798,8 +798,22 @@ function bls_test_input_files ()
 function bls_add_job_wrapper ()
 {
   bls_test_input_files
-  bls_start_job_wrapper >> $bls_tmp_file
-  bls_finish_job_wrapper >> $bls_tmp_file
+
+  rand=`od -A n -t xC -N 6 /dev/urandom`
+  bls_tmp_name_pilot=bl_${rand// /}_pilot
+  if [ -n "$blah_wn_temporary_home_dir" ] ; then
+    bls_tmp_file_pilot=${blah_wn_temporary_home_dir}/$bls_tmp_name_pilot
+  else
+    bls_tmp_file_pilot=$PWD/$bls_tmp_name_pilot
+  fi
+  `touch $bls_tmp_file_pilot;chmod 700 $bls_tmp_file_pilot`
+  echo "#!/bin/bash" >> $bls_tmp_file_pilot
+
+  bls_start_job_wrapper >> $bls_tmp_file_pilot
+  bls_finish_job_wrapper >> $bls_tmp_file_pilot
+
+  echo "$bls_tmp_file_pilot" >> $bls_tmp_file
+  echo "rm -f $bls_tmp_file_pilot" >> $bls_tmp_file
 }
 
 function bls_set_up_local_and_extra_args ()
